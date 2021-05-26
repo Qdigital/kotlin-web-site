@@ -11,13 +11,13 @@ the given code style.
  
 ### Apply the style guide
 
-1. Go to **Settings | Editor | Code Style | Kotlin**.
+1. Go to **Preferences | Editor | Code Style | Kotlin**.
 2. Click **Set from...**.
 3. Select **Kotlin style guide** .
 
 ### Verify that your code follows the style guide
 
-1. Go to **Settings | Editor | Inspections | Kotlin**.
+1. Go to **Preferences | Editor | Inspections | Kotlin**.
 2. Open **Kotlin | Style issues**.
 3. Switch on **File is not formatted according to project settings** inspection.
 Additional inspections that verify other issues described in the style guide (such as naming conventions) are enabled by default.
@@ -78,7 +78,7 @@ referenced inside the class, put them in the end, after the companion object.
 ### Interface implementation layout
 
 When implementing an interface, keep the implementing members in the same order as members of the interface (if necessary,
-interspersed with additional private methods used for the implementation)
+interspersed with additional private methods used for the implementation).
 
 ### Overload layout
 
@@ -593,7 +593,7 @@ Using trailing commas has several benefits:
 
 Trailing commas are entirely optional – your code will still work without them. The Kotlin style guide encourages the use of trailing commas at the declaration site and leaves it at your discretion for the call site.
 
-To enable trailing commas in the IntelliJ IDEA formatter, go to **Settings | Editor | Code Style | Kotlin**, 
+To enable trailing commas in the IntelliJ IDEA formatter, go to **Preferences | Editor | Code Style | Kotlin**, 
 open the **Other** tab and select the **Use trailing comma** option.
 
 #### Enumerations {initial-collapse-state="collapsed"}
@@ -939,7 +939,7 @@ Prefer using `if` for binary conditions instead of `when`.
 For example, use this syntax with `if`:
 
 ```kotlin
-`if (x == null) ... else ...`
+if (x == null) ... else ...
 ```
 
 instead of this one with `when`:
@@ -984,18 +984,32 @@ To maintain indentation in multiline strings, use `trimIndent` when the resultin
 indentation, or `trimMargin` when internal indentation is required:
 
 ```kotlin
-assertEquals(
+fun main() {
+//sampleStart
+   println("""
+    Not
+    trimmed
+    text
     """
-    Foo
-    Bar
-    """.trimIndent(), 
-    value
-)
+   )
 
-val a = """if(a > 1) {
+   println("""
+    Trimmed
+    text
+    """.trimIndent()
+   )
+
+   println()
+
+   val a = """if(a > 1) {
           |    return a
           |}""".trimMargin()
+
+   println(a)
+//sampleEnd
+}
 ```
+{kotlin-runnable="true" kotlin-min-compiler-version="1.3"}
 
 ### Functions vs properties
 
@@ -1077,5 +1091,5 @@ When writing libraries, it's recommended to follow an additional set of rules to
  * Always explicitly specify member visibility (to avoid accidentally exposing declarations as public API)
  * Always explicitly specify function return types and property types (to avoid accidentally changing the return type
    when the implementation changes)
- * Provide KDoc comments for all public members, with the exception of overrides that do not require any new documentation
+ * Provide [KDoc](kotlin-doc.md) comments for all public members, with the exception of overrides that do not require any new documentation
    (to support generating documentation for the library)
