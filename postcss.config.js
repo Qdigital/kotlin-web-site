@@ -1,6 +1,11 @@
 module.exports = {
-  plugins: [
-    require('autoprefixer')({ browsers: ['last 2 versions'] }),
-    require('postcss-custom-properties')
-  ]
+	plugins: {
+		autoprefixer: {},
+		'postcss-custom-properties': {},
+		'postcss-import': {},
+		'postcss-nesting': {},
+		'postcss-custom-media': {
+			preserve: false,
+		},
+	},
 };

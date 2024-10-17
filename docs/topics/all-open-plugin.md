@@ -1,41 +1,57 @@
 [//]: # (title: All-open compiler plugin)
 
 Kotlin has classes and their members `final` by default, which makes it inconvenient to use frameworks and libraries such
-as Spring AOP that require classes to be `open`. The *all-open* compiler plugin adapts Kotlin to the requirements of those
+as Spring AOP that require classes to be `open`. The `all-open` compiler plugin adapts Kotlin to the requirements of those
 frameworks and makes classes annotated with a specific annotation and their members open without the explicit `open` keyword.
 
 For instance, when you use Spring, you don't need all the classes to be open, but only classes annotated with specific
-annotations like `@Configuration` or `@Service`. *All-open* allows to specify such annotations.
+annotations like `@Configuration` or `@Service`. The `all-open` plugin allows you to specify such annotations.
 
-We provide *all-open* plugin support both for Gradle and Maven with the complete IDE integration.
+Kotlin provides `all-open` plugin support both for Gradle and Maven with the complete IDE integration.
 
->For Spring, you can use the `kotlin-spring` compiler plugin ([see below](#spring-support)).
+> For Spring, you can use the [`kotlin-spring` compiler plugin](#spring-support).
 >
-{type="note"}
+{style="note"}
 
 ## Gradle
 
-Add the plugin artifact to the build script dependencies and apply the plugin:
+Add the plugin in your `build.gradle(.kts)` file:
 
-```groovy
-buildscript {
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlin_version"
-    }
+<tabs group="build-script">
+<tab title="Kotlin" group-key="kotlin">
+
+```kotlin
+plugins {
+    kotlin("plugin.allopen") version "%kotlinVersion%"
 }
-
-apply plugin: "kotlin-allopen"
 ```
 
-As an alternative, you can enable it using the `plugins` block:
+</tab>
+<tab title="Groovy" group-key="groovy">
 
 ```groovy
 plugins {
-  id "org.jetbrains.kotlin.plugin.allopen" version "%kotlinVersion%"
+    id "org.jetbrains.kotlin.plugin.allopen" version "%kotlinVersion%"
 }
 ```
 
+</tab>
+</tabs>
+
 Then specify the list of annotations that will make classes open:
+
+<tabs group="build-script">
+<tab title="Kotlin" group-key="kotlin">
+
+```kotlin
+allOpen {
+    annotation("com.my.Annotation")
+    // annotations("com.another.Annotation", "com.third.Annotation")
+}
+```
+
+</tab>
+<tab title="Groovy" group-key="groovy">
 
 ```groovy
 allOpen {
@@ -43,6 +59,10 @@ allOpen {
     // annotations("com.another.Annotation", "com.third.Annotation")
 }
 ```
+
+</tab>
+</tabs>
+
 
 If the class (or any of its superclasses) is annotated with `com.my.Annotation`, the class itself and all its members
 will become open.
@@ -62,7 +82,7 @@ annotation as well.
 
 ## Maven
 
-Here's how to use all-open with Maven:
+Add the plugin in your `pom.xml` file:
 
 ```xml
 <plugin>
@@ -93,34 +113,38 @@ Here's how to use all-open with Maven:
 </plugin>
 ```
 
-Please refer to the [Gradle](#gradle) section for the detailed information about how all-open annotations work.
+Please refer to the [Gradle section](#gradle) for the detailed information about how all-open annotations work.
 
 ## Spring support
 
-If you use Spring, you can enable the *kotlin-spring* compiler plugin instead of specifying Spring annotations manually.
-The kotlin-spring is a wrapper on top of all-open, and it behaves exactly the same way.
+If you use Spring, you can enable the `kotlin-spring` compiler plugin instead of specifying Spring annotations manually.
+The `kotlin-spring` is a wrapper on top of `all-open`, and it behaves exactly the same way.
 
-As with all-open, add the plugin to the build script dependencies:
+Add the `spring` plugin in your `build.gradle(.kts)` file:
 
-```groovy
-buildscript {
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlin_version"
-    }
+<tabs group="build-script">
+<tab title="Kotlin" group-key="kotlin">
+
+```kotlin
+plugins {
+    id("org.jetbrains.kotlin.plugin.spring") version "%kotlinVersion%"
 }
-
-apply plugin: "kotlin-spring" // instead of "kotlin-allopen"
 ```
 
-Or using the Gradle plugins DSL:
+</tab>
+<tab title="Groovy" group-key="groovy">
 
 ```groovy
 plugins {
-  id "org.jetbrains.kotlin.plugin.spring" version "%kotlinVersion%"
+    id "org.jetbrains.kotlin.plugin.spring" version "%kotlinVersion%"
 }
 ```
 
-In Maven, the `spring` plugin is provided by the `kotlin-maven-allopen` plugin dependency, so to enable it:
+</tab>
+</tabs>
+
+In Maven, the `spring` plugin is provided by the `kotlin-maven-allopen` plugin dependency, so to enable it in your 
+`pom.xml` file:
 
 ```xml
 <compilerPlugins>
@@ -137,10 +161,10 @@ In Maven, the `spring` plugin is provided by the `kotlin-maven-allopen` plugin d
 ```
 
 The plugin specifies the following annotations: 
-* [`@Component`](http://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/stereotype/Component.html)
-* [`@Async`](http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/scheduling/annotation/Async.html)
-* [`@Transactional`](http://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/transaction/annotation/Transactional.html)
-* [`@Cacheable`](http://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/cache/annotation/Cacheable.html)
+* [`@Component`](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/stereotype/Component.html)
+* [`@Async`](https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/scheduling/annotation/Async.html)
+* [`@Transactional`](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/transaction/annotation/Transactional.html)
+* [`@Cacheable`](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/cache/annotation/Cacheable.html)
 * [`@SpringBootTest`](https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/test/context/SpringBootTest.html)
 
 Thanks to meta-annotations support, classes annotated with [`@Configuration`](https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/context/annotation/Configuration.html),
@@ -149,24 +173,25 @@ Thanks to meta-annotations support, classes annotated with [`@Configuration`](ht
 [`@Service`](https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/stereotype/Service.html)
 or [`@Repository`](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/stereotype/Repository.html)
 are automatically opened since these annotations are meta-annotated with
-[`@Component`](http://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/stereotype/Component.html).
+[`@Component`](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/stereotype/Component.html).
  
 Of course, you can use both `kotlin-allopen` and `kotlin-spring` in the same project.
 
-Note that if you use the project template generated by the [start.spring.io](http://start.spring.io/#!language=kotlin)
-service, the `kotlin-spring` plugin will be enabled by default.
+> If you generate the project template by the [start.spring.io](https://start.spring.io/#!language=kotlin)
+> service, the `kotlin-spring` plugin will be enabled by default.
+>
+{style="note"}
 
 ## Command-line compiler
 
 All-open compiler plugin JAR is available in the binary distribution of the Kotlin compiler. You can attach the plugin
-by providing the path to its JAR file using the `Xplugin` kotlinc option:
+by providing the path to its JAR file using the `-Xplugin` kotlinc option:
 
 ```bash
 -Xplugin=$KOTLIN_HOME/lib/allopen-compiler-plugin.jar
 ```
 
-You can specify all-open annotations directly, using the `annotation` plugin option, or enable the "preset".
-The only preset available now for all-open is `spring`.
+You can specify all-open annotations directly, using the `annotation` plugin option, or enable the _preset_:
 
 ```bash
 # The plugin option format is: "-P plugin:<plugin id>:<key>=<value>". 
@@ -175,3 +200,5 @@ The only preset available now for all-open is `spring`.
 -P plugin:org.jetbrains.kotlin.allopen:annotation=com.my.Annotation
 -P plugin:org.jetbrains.kotlin.allopen:preset=spring
 ```
+
+Presets that available for the `all-open` plugin are: `spring`, `micronaut`, and `quarkus`.

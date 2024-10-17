@@ -2,101 +2,130 @@
 
 This tutorial demonstrates how to use IntelliJ IDEA for creating a Kotlin/Native application.
 
-To get started, install the latest version of [IntelliJ IDEA](http://www.jetbrains.com/idea/download/index.html). The tutorial is applicable to both IntelliJ IDEA Community Edition and the Ultimate Edition.
+To get started, install the latest version of [IntelliJ IDEA](https://www.jetbrains.com/idea/download/index.html).
+The tutorial is applicable to both IntelliJ IDEA Community Edition and the Ultimate Edition.
 
-## Create a new Kotlin/Native project in IntelliJ IDEA
+> If you have a Mac with macOS and want to create and run iOS or desktop applications, you also need to
+> [install Xcode Command Line Tools](https://developer.apple.com/download/). For more information,
+> see [Set up an environment](https://www.jetbrains.com/help/kotlin-multiplatform-dev/multiplatform-setup.html).
+> 
+{style="note"}
 
-1. In IntelliJ IDEA, select **File** \| **New** \| **Project**.
-2. In the panel on the left, select **Kotlin**.
-3. Enter a project name, select **Native Application** as the project template, and click **Next**.
+## Before you start
 
-   ![Create a native application](native-new-project-intellij-1.png)
+1. Download and install the latest version of [IntelliJ IDEA](https://www.jetbrains.com/idea/) with the latest [Kotlin plugin](releases.md).
+2. Clone the [project template](https://github.com/Kotlin/kmp-native-wizard)
+   by selecting **File** | **New** | **Project from Version Control** in IntelliJ IDEA.
+3. Open the `build.gradle.kts` file, the build script that contains the project settings. To create Kotlin/Native applications,
+   you need the Kotlin Multiplatform Gradle plugin installed. Ensure that you use the latest version of the plugin:
 
-   By default, your project will use Gradle with Kotlin DSL as the build system.
-   > Kotlin/Native doesn't support Maven and IntelliJ IDEA native builder.
-   >
-   {type="note"}
+   ```kotlin
+   plugins {
+       kotlin("multiplatform") version "%kotlinVersion%"
+   }
+   ```
+   
+4. Follow the suggestion to reload Gradle files:
 
-4. Accept the default configuration on the next screen and click **Finish**.
+   ![Load Gradle changes button](load-gradle-changes.png){width=295}
 
-   ![Configure a native application](native-new-project-intellij-2.png)
+> * Read more about these settings in the [Multiplatform Gradle DSL reference](multiplatform-dsl-reference.md).
+> * Read more about the Gradle build system in the [documentation](gradle.md).
+>
+{style="tip"}
 
-Your project will open. By default, the wizard creates the necessary `main.kt` file with code that prints "Hello, Kotlin/Native!" to the standard output.
+## Build and run the application
 
-The `build.gradle.kts` file contains the project settings. Read more about these settings in the [Kotlin Multiplatform Gradle DSL reference](mpp-dsl-reference.md).
+Open the `Main.kt` file in the `src/nativeMain/kotlin/` directory, then press the green icon in the gutter to run the code:
 
-## Run the application
+![Run the application](native-run-gutter.png){width=478}
 
-Start the application by clicking **Run** next to the run configuration at the top of the screen.
+IntelliJ IDEA runs the code using the Gradle task. You will see the result in the **Run** tab:
 
-![Run the application](native-run-app.png){width=600}
+![Application output](native-output-gutter-1.png){width=331}
 
-IntelliJ IDEA opens the **Run** tab and shows the output:
-![Application output](native-output-1.png){width=600}
+After the first run, you will see the corresponding run configuration on the top bar in the IDE:
+
+![Gradle run configuration](native-run-config.png){width=503}
+
+> IntelliJ IDEA Ultimate users can install the [Native Debugging Support](https://plugins.jetbrains.com/plugin/12775-native-debugging-support)
+> plugin that allows to debug compiled native executables, and also automatically creates run configurations for
+> imported Kotlin/Native projects.
+
+You can [configure IntelliJ IDEA](https://www.jetbrains.com/help/idea/compiling-applications.html#auto-build) to build
+your project automatically:
+
+1. Go to **Settings/Preferences | Build, Execution, Deployment | Compiler**.
+2. On the **Compiler** page, select **Build project automatically**.
+3. Apply the changes.
+
+Now when you make changes in the class files or save the file (**Ctrl + S**/**Cmd + S**), IntelliJ IDEA automatically
+performs an incremental build of the project.
 
 ## Update the application
 
 ### Count the letters in your name
 
-1. Open the file `main.kt` in `src/<your_app_name>Main/kotlin`.
+1. Open the file `Main.kt` in `src/nativeMain/kotlin`.
 
-   The `src` directory contains the Kotlin source files and resources. The file `main.kt` includes sample code that prints "Hello, Kotlin/Native!" using the [`println()`](https://kotlinlang.org/api/latest/jvm/stdlib/stdlib/kotlin.io/println.html) function.
+   The `src` directory contains Kotlin source files. The `Main.kt` file includes code that prints "Hello, Kotlin/Native!"
+   using the [`println()`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.io/println.html) function.
 
-2. Add code to read the input. Use the [`readLine()`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.io/read-line.html) function to read the input value and assign it to the `name` variable.
+2. Add code to read the input. Use the [`readln()`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.io/readln.html) function to read the input value and assign it to the `name` variable:
 
    ```kotlin
    fun main() {
        // Read the input value.
        println("Hello, enter your name:")
-       val name = readLine()
+       val name = readln()
    }
    ```
 
-3. Eliminate the whitespaces and count the letters:
-   * Check that the provided name is not `null` with the [safe call operator `?.`](null-safety.md#safe-calls).
+3. To run this app using Gradle, specify `System.in` as the input to use in the `build.gradle.kts` file
+   and load the Gradle changes:
+
+   ```kotlin
+   kotlin {
+       //...
+       nativeTarget.apply {
+           binaries {
+               executable {
+                   entryPoint = "main"
+                   runTask?.standardInput = System.`in`
+               }
+           }
+       }
+       //...
+   }
+   ```
+   {initial-collapse-state="collapsed" collapsible="true" collapsed-title="runTask?.standardInput = System.`in`"}
+
+4. Eliminate the whitespaces and count the letters:
    * Use the [`replace()`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.text/replace.html) function to remove the empty spaces in the name.
-   * Use the scope function [`let`](scope-functions.md#let) to run the function within the object context. 
-   * Use a [string template](basic-types.md#string-templates) to insert your name length into the string by adding a dollar sign `$` and enclosing it in curly braces – `${it.length}`.
+   * Use the scope function [`let`](scope-functions.md#let) to run the function within the object context.
+   * Use a [string template](strings.md#string-templates) to insert your name length into the string by adding a dollar sign `$` and enclosing it in curly braces – `${it.length}`.
      `it` is the default name of a [lambda parameter](coding-conventions.md#lambda-parameters).
 
    ```kotlin
    fun main() {
        // Read the input value.
        println("Hello, enter your name:")
-       val name = readLine()
+       val name = readln()
        // Count the letters in the name.
-       name?.replace(" ", "")?.let {
+       name.replace(" ", "").let {
            println("Your name contains ${it.length} letters")
        }
    }
    ```
 
-4. Report a null value using the [`error()`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/error.html) function after the [Elvis operator `?:`](null-safety.md#elvis-operator).
-
-   ```kotlin
-   fun main() {
-       // Read the input value.
-       println("Hello, enter your name:")
-       val name = readLine()
-       // Count the letters in the name.
-       name?.replace(" ", "")?.let {
-           println("Your name contains ${it.length} letters")
-       } ?: error("Error while reading input from the terminal: the value can't be null.")
-   }
-   ```
-
-5. Save the changes and run the application.
-
-   IntelliJ IDEA opens the **Run** tab and shows the output.
-
+5. Run the application.
 6. Enter your name and enjoy the result:
 
-   ![Application output](native-output-2.png)
+   ![Application output](native-output-gutter-2.png){width=422}
 
 ### Count the unique letters in your name
 
-1. Open the file `main.kt` in `src/<your_app_name>Main/kotlin`.
-
+1. Open the file `Main.kt` in `src/nativeMain/kotlin`.
 2. Declare the new [extension function](extensions.md#extension-functions) `countDistinctCharacters()` for `String`:
 
    * Convert the name to lowercase using the [`lowercase()`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.text/lowercase.html) function.
@@ -108,7 +137,7 @@ IntelliJ IDEA opens the **Run** tab and shows the output:
    fun String.countDistinctCharacters() = lowercase().toList().distinct().count()
    ```
 
-3. Use the `countDistinctCharacters()` function to count the unique letters in your name.
+3. Use the `countDistinctCharacters()` function to count the unique letters in your name:
 
    ```kotlin
    fun String.countDistinctCharacters() = lowercase().toList().distinct().count()
@@ -116,29 +145,23 @@ IntelliJ IDEA opens the **Run** tab and shows the output:
    fun main() {
        // Read the input value.
        println("Hello, enter your name:")
-       val name = readLine()
+       val name = readln()
        // Count the letters in the name.
-       name?.replace(" ", "")?.let {
+       name.replace(" ", "").let {
            println("Your name contains ${it.length} letters")
            // Print the number of unique letters.
            println("Your name contains ${it.countDistinctCharacters()} unique letters")
-       } ?: error("Error while reading input from the terminal: the value can't be null.")
+       }
    }
    ```
 
-3. Save the changes and run the application.
+4. Run the application.
+5. Enter your name and enjoy the result:
 
-   IntelliJ IDEA opens the **Run** tab and shows the output.
-
-4. Enter your name and enjoy the result:
-
-   ![Application output](native-output-3.png)
+   ![Application output](native-output-gutter-3.png){width=422}
 
 ## What's next?
 
-Once you have created your first application, you can go to Kotlin hands-on labs and complete long-form tutorials on Kotlin/Native. 
-
-For Kotlin/Native, the following hands-on labs are currently available:
-
-* [Learn about the concurrency model in Kotlin/Native](https://play.kotlinlang.org/hands-on/Kotlin%20Native%20Concurrency/00_Introduction) shows you how to build a command-line application and work with states in a multi-threaded environment.
-* [Creating an HTTP Client in Kotlin/Native](https://play.kotlinlang.org/hands-on/Introduction%20to%20Kotlin%20Native/01_Introduction) explains how to create a native HTTP client and interoperate with C libraries.
+Once you have created your first application, you can complete our long-form tutorial on Kotlin/Native,
+[Create an app using C Interop and libcurl](native-app-with-c-and-libcurl.md) that explains how to create a native HTTP
+client and interoperate with C libraries.

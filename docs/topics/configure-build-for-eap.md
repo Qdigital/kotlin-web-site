@@ -1,6 +1,6 @@
 [//]: # (title: Configure your build for EAP)
 
-If you create new projects using the EAP version of Kotlin, you don’t need to perform any additional steps. The [Kotlin Plugin](install-eap-plugin.md) will do everything for you!
+If you create new projects using the EAP version of Kotlin, you don't need to perform any additional steps. The [Kotlin Plugin](install-eap-plugin.md) will do everything for you!
 
 You only need to configure your build manually for existing projects — projects that were created before installing the EAP version.
 
@@ -13,7 +13,7 @@ The EAP version of Kotlin may not work with the libraries of the previously rele
 The following procedures describe how to configure your build in Gradle and Maven:
 
 * [Configure in Gradle](#configure-in-gradle)
-* [Configure in Maven](#configure-in-maven)  
+* [Configure in Maven](#configure-in-maven)
 
 ## Configure in Gradle 
 
@@ -31,30 +31,35 @@ Alternatively, you can specify the EAP version in the `pluginManagement` block i
 
 Here is an example for the Multiplatform project.
 
-<tabs>
-
-```groovy
-plugins {
-   id 'java'
-   id 'org.jetbrains.kotlin.multiplatform' version 'KOTLIN-EAP-VERSION'
-}
-
-repositories {
-   mavenCentral()
-}
-```
+<tabs group="build-script">
+<tab title="Kotlin" group-key="kotlin">
 
 ```kotlin
 plugins {
-   java
-   kotlin("multiplatform") version "KOTLIN-EAP-VERSION"
+    java
+    kotlin("multiplatform") version "KOTLIN-EAP-VERSION"
 }
 
 repositories {
-   mavenCentral()
+    mavenCentral()
 }
 ```
 
+</tab>
+<tab title="Groovy" group-key="groovy">
+
+```groovy
+plugins {
+    id 'java'
+    id 'org.jetbrains.kotlin.multiplatform' version 'KOTLIN-EAP-VERSION'
+}
+
+repositories {
+    mavenCentral()
+}
+```
+
+</tab>
 </tabs>
 
 ### Adjust versions in dependencies
@@ -68,19 +73,14 @@ see [EAP build details](eap.md#build-details).
 > 
 > If there are incompatible changes in next EAP versions, we release a new version of the library.
 >
-{type="note"}
+{style="note"}
 
 Here is an example.
 
 For the **kotlinx.coroutines** library, add the version number – `%coroutinesEapVersion%` – that is compatible with `%kotlinEapVersion%`. 
 
-<tabs>
-
-```groovy
-dependencies {
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:%coroutinesEapVersion%"
-}
-```
+<tabs group="build-script">
+<tab title="Kotlin" group-key="kotlin">
 
 ```kotlin
 dependencies {
@@ -88,6 +88,16 @@ dependencies {
 }
 ```
 
+</tab>
+<tab title="Groovy" group-key="groovy">
+
+```groovy
+dependencies {
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:%coroutinesEapVersion%"
+}
+```
+
+</tab>
 </tabs>
 
 ## Configure in Maven
@@ -135,4 +145,3 @@ In the sample Maven project definition, replace `KOTLIN-EAP-VERSION` with the ac
     </build>
 </project>
 ```
-

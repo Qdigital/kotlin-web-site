@@ -1,11 +1,11 @@
-- title: "Kotlin 1.5.0-RC Released: Changes to the Standard and Test Libraries"
-  link: https://blog.jetbrains.com/kotlin/2021/04/kotlin-1-5-0-rc-released/
+- title: "KotlinConf 2024 Tickets Are Now Available!"
+  link: https://blog.jetbrains.com/kotlin/2023/07/kotlinconf-2024/
 
-- title: "kotlinx.serialization 1.2.0: Faster JSON Handling, Value Classes, API Docs & More"
-  link: https://youtu.be/698I_AH8h6s
+- title: "Updated Kotlin roadmap for 2023"
+  link: https://kotlinlang.org/docs/roadmap.html
 
-- title: "Talking Kotlin: Contributing to the Kotlin Compiler"
-  link: https://youtu.be/UryyHq45Y_8
+- title: "Kotlin Multiplatform Mobile Content Creators"
+  link: https://blog.jetbrains.com/kotlin/2022/12/shout-out-to-kotlin-multiplatform-mobile-content-creators/
 
-- title: "Sealed Interfaces and Sealed Classes Improvements"
-  link: https://youtu.be/d_Mor21W_60
+- title: "Reproducible Kotlin Compiler Artifacts"
+  link: https://blog.jetbrains.com/kotlin/2023/02/reproducible-kotlin-compiler-artifacts/

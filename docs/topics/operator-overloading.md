@@ -41,7 +41,7 @@ function or an extension function.
 > These operations, as well as all the others, are optimized for [basic types](basic-types.md) and do not introduce 
 > overhead of function calls for them.
 >
-{type="note"}
+{style="note"}
 
 As an example, here's how you can overload the unary minus operator:
 
@@ -98,7 +98,8 @@ For the *prefix* forms `++a` and `--a` resolution works the same way, and the ef
 | `a * b` | `a.times(b)` |
 | `a / b` | `a.div(b)` |
 | `a % b` | `a.rem(b)` |
-| `a..b ` | `a.rangeTo(b)` |
+| `a..b` | `a.rangeTo(b)` |
+| `a..<b` | `a.rangeUntil(b)` |
 
 For the operations in this table, the compiler just resolves the expression in the *Translated to* column.
 
@@ -112,7 +113,7 @@ data class Counter(val dayIndex: Int) {
 }
 ```
 
-### `in` operator
+### in operator
 
 | Expression | Translated to |
 | -----------|-------------- |
@@ -134,7 +135,7 @@ For `in` and `!in` the procedure is the same, but the order of arguments is reve
 
 Square brackets are translated to calls to `get` and `set` with appropriate numbers of arguments.
 
-### `invoke` operator
+### invoke operator
 
 | Expression | Translated to |
 |--------|---------------|
@@ -158,14 +159,14 @@ Parentheses are translated to calls to `invoke` with appropriate number of argum
 For the assignment operations, for example `a += b`, the compiler performs the following steps:
 
 * If the function from the right column is available:
-  * If the corresponding binary function (that means `plus()` for `plusAssign()`) is available too, report error (ambiguity).
+  * If the corresponding binary function (that means `plus()` for `plusAssign()`) is available too, `a` is a mutable variable, and the return type of `plus` is a subtype of the type of `a`, report an error (ambiguity).
   * Make sure its return type is `Unit`, and report an error otherwise.
   * Generate code for `a.plusAssign(b)`.
 * Otherwise, try to generate code for `a = a + b` (this includes a type check: the type of `a + b` must be a subtype of `a`).
 
 > Assignments are *NOT* expressions in Kotlin.
 >
-{type="note"}
+{style="note"}
 
 ### Equality and inequality operators
 
@@ -179,7 +180,7 @@ which can be overridden to provide custom equality check implementation. Any oth
 
 > `===` and `!==` (identity checks) are not overloadable, so no conventions exist for them.
 >
-{type="note"}
+{style="note"}
 
 The `==` operation is special: it is translated to a complex expression that screens for `null`'s.
 `null == null` is always true, and `x == null` for a non-null `x` is always false and won't invoke `x.equals()`.
@@ -196,6 +197,7 @@ The `==` operation is special: it is translated to a complex expression that scr
 All comparisons are translated into calls to `compareTo`, that is required to return `Int`.
 
 ### Property delegation operators
+
 `provideDelegate`, `getValue` and `setValue` operator functions are described
 in [Delegated properties](delegated-properties.md).
 

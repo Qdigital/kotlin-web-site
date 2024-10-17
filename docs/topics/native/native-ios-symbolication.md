@@ -18,18 +18,8 @@ By default, Kotlin/Native compiler produces `.dSYM` for release
 compiler flag. At the same time, this option is disabled by default for other platforms. To enable it, use the `-Xadd-light-debug=enable`
 compiler option.
 
-<tabs>
-
-```groovy
-kotlin {
-    targets.withType(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget) {
-        binaries.all {
-            freeCompilerArgs += "-Xadd-light-debug={enable|disable}"
-        }
-    }
-}
-```
-
+<tabs group="build-script">
+<tab title="Kotlin" group-key="kotlin">
 
 ```kotlin
 kotlin {
@@ -41,6 +31,20 @@ kotlin {
 }
 ```
 
+</tab>
+<tab title="Groovy" group-key="groovy">
+
+```groovy
+kotlin {
+    targets.withType(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget) {
+        binaries.all {
+            freeCompilerArgs += "-Xadd-light-debug={enable|disable}"
+        }
+    }
+}
+```
+
+</tab>
 </tabs>
 
 In projects created from IntelliJ IDEA or AppCode templates these `.dSYM` bundles
@@ -56,17 +60,8 @@ If rebuilding is performed on App Store side, then `.dSYM` of rebuilt *dynamic* 
 seems discarded and not downloadable from App Store Connect.
 In this case, it may be required to make the framework static.
 
-<tabs>
-
-```groovy
-kotlin {
-    targets.withType(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget) {
-        binaries.withType(org.jetbrains.kotlin.gradle.plugin.mpp.Framework) {
-            isStatic = true
-        }
-    }
-}
-```
+<tabs group="build-script">
+<tab title="Kotlin" group-key="kotlin">
 
 ```kotlin
 kotlin {
@@ -78,21 +73,18 @@ kotlin {
 }
 ```
 
-</tabs>
+</tab>
+<tab title="Groovy" group-key="groovy">
 
-## Decode inlined stack frames
-
-Xcode doesn't seem to properly decode stack trace elements of inlined function
-calls (these aren't only Kotlin `inline` functions but also functions that are
-inlined when optimizing machine code). So some stack trace elements may be
-missing. If this is the case, consider using `lldb` to process crash report
-that is already symbolicated by Xcode, for example:
-
-```bash
-$ lldb -b -o "script import lldb.macosx" -o "crashlog file.crash"
+```groovy
+kotlin {
+    targets.withType(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget) {
+        binaries.withType(org.jetbrains.kotlin.gradle.plugin.mpp.Framework) {
+            isStatic = true
+        }
+    }
+}
 ```
 
-This command should output crash report that is additionally processed and
-includes inlined stack trace elements.
-
-More details can be found in [LLDB documentation](https://lldb.llvm.org/use/symbolication.html).
+</tab>
+</tabs>
